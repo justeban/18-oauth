@@ -57,9 +57,17 @@
         <div id="cash"></div>
     </main>
 
-    <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script>
+
+        const ENV = {};
+
+        ENV.isProduction = window.location.protocol === 'https:';
+        ENV.productionApiUrl = 'https://salty-reef-53948.herokuapp.com';
+        ENV.developmentApiUrl = 'http://localhost:3000';
+        ENV.apiURL = ENV.isProduction ? ENV.productionApiUrl : ENV.developmentApiUrl;
+
         let token = '';
 
         $('#money').hide();
@@ -72,7 +80,7 @@
                 headers: {
                     "Authorization": "Bearer " + token
                 },
-                url: "http://localhost:3000/api/v1/users",
+                url: `${ENV.apiURL}/api/v1/users`,
                 async: false,
                 success: function (data) {
                     $('#cash').text(data);
@@ -88,7 +96,7 @@
             e.preventDefault();
             $.ajax({
                 type: "POST",
-                url: "http://localhost:3000/signup",
+                url: `${ENV.apiURL}/signup`,
                 async: false,
                 data: postData,
                 success: function (data) {
@@ -106,7 +114,7 @@
             let authstring = btoa(`${username}:${password}`);
             $.ajax({
                 type: "GET",
-                url: "http://localhost:3000/signin",
+                url: `${ENV.apiURL}/signin`,
                 async: false,
                 headers: {
                     "Authorization": "Basic " + authstring
@@ -139,7 +147,7 @@
 
         // let authURL = `${googleURL}?${QueryString}`;
 
-        $('#oauth').append(`<a href="http://localhost:3000/login">Login With Auth0</a>`);
+        $('#oauth').append(`<a href="${ENV.apiURL}/login">Login With Auth0</a>`);
 
     </script>
 
