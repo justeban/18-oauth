@@ -89,11 +89,13 @@ authRouter.get(
     };    
     User.createFromAuth0(user)
       .then(user => {
-        console.log(user);
         return user.generateToken();
       })
-      .then(res.redirect(process.env.CLIENT_URL))
-      .catch();
+      .then(token => {
+        res.cookie('Token', token);
+        res.redirect(process.env.CLIENT_URL);
+      })
+      .catch(err => console.log(err));
        
   }
 );

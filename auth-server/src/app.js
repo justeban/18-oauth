@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 
 import authRouter from './auth/router.js';
+import uploadRouter from './routes/upload.js';
 
 import errorHandler from './middleware/error.js';
 import notFound from './middleware/404.js';
@@ -48,6 +49,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(uploadRouter);
 app.use(authRouter);
 
 app.use(notFound);

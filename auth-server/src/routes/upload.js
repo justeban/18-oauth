@@ -18,10 +18,6 @@ uploadRouter.post('/upload', auth, upload.any(), (req, res, next) => {
   let file = req.files[0];
   let key = `${file.filename}.${file.originalname}`;
 
-  console.log('body', req.body);
-  console.log('files', req.files);
-  console.log(key);
-
   return s3.upload(file.path, key)
     .then(url => {
       let output = {
@@ -31,7 +27,7 @@ uploadRouter.post('/upload', auth, upload.any(), (req, res, next) => {
     })
     .catch(next);
 
-  res.sendStatus(418);
+  // res.sendStatus(418);
 
 });
 
