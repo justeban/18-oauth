@@ -18,16 +18,13 @@ const upload = (path, key) => {
   return s3.upload(config)
     .promise()
     .then(res => { // onSuccess
-      console.log('AWS URL', res.Location);
       return fs.remove(path) // delete local file
         .then(() => res.Location); // resolve s3 url 
     })
     .catch(err => { // onFailure
-      console.error('ERROR', err);
       return fs.remove(path) // delete local file
         .then(() => Promise.reject(err)); // continue rejecting error
     });
-
 };
 
 const remove = (key) => {
