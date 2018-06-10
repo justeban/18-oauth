@@ -1,5 +1,6 @@
 'use strict';
 
+const app = {};
 const ENV = {};
 
 ENV.isProduction = window.location.protocol === 'https:';
@@ -66,4 +67,43 @@ $('#signin').on('submit', function (e) {
   });
 });
 
-$('#oauth').append(`<a href="${ENV.apiURL}/login">Login With Auth0</a>`);
+
+
+app.initGuestView = () => {
+  console.log('In guests');
+  $('section').hide();
+  $('#token').empty();
+  $('#sign-in, #sign-up').show();
+  $('#oauth').empty().append(`<a href="${ENV.apiURL}/login">Login With Auth0</a>`);
+};
+
+app.initSignedInView = () => {
+  var token = document.cookie.replace(/token\=/i, '');
+
+  $('#token').text(token);
+  $('section').hide();
+  $('#upload').show();
+  $('#oauth').empty().append(`<a href="${ENV.apiURL}/logout">Logout</a>`);
+  $('#upload-form').attr('action', `${ENV.apiURL}/upload`);
+};
+
+
+if (document.cookie && document.cookie.match(/token/i)) {
+  let token = document.cookie.replace(/token\=/i, '');
+  $.ajax({
+    type: 'GET',
+    url: `${ENV.apiURL}/signin`,
+    async: false,
+    headers: {
+      'Authorization': 'Bearer ' + token,
+    },
+    success: function() {
+      app.initSignedInView();
+    },      
+    error: function() {
+      app.initGuestView();
+    },
+  }); 
+} else {
+  app.initGuestView();
+}

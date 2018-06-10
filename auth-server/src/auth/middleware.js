@@ -39,10 +39,12 @@ export default (req, res, next) => {
   };
 
   try {
+    
     let auth = {};
     let authHeader = req.headers.authorization;
 
     if (!authHeader) {
+      
       return getAuth();
     }
 

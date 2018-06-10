@@ -19,6 +19,7 @@ authRouter.post('/signup', (req, res, next) => {
 });
 
 authRouter.get('/signin', auth, (req, res, next) => { //eslint-disable-line 
+  console.log(req.user);
   res.cookie('Token', req.token);
   res.send(req.token);
 });
@@ -73,6 +74,7 @@ authRouter.get(
 
 authRouter.get('/logout', (req, res) => {
   req.logout();
+  res.cookie('Token', '');
   res.redirect(process.env.CLIENT_URL);
 });
 
@@ -96,7 +98,6 @@ authRouter.get(
         res.redirect(process.env.CLIENT_URL);
       })
       .catch(err => console.log(err));
-       
   }
 );
 

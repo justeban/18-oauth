@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'petrobots' }],
+  pics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'pics'}],
 });
 
 userSchema.pre('save', function (next) {
@@ -24,6 +25,7 @@ userSchema.pre('save', function (next) {
 
 userSchema.pre('findOne', function (next) {
   this.populate('pets');
+  this.populate('pics');
   next();
 });
 
