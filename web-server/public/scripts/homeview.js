@@ -67,6 +67,21 @@ $('#signin').on('submit', function (e) {
   });
 });
 
+// $('#upload-form').on('submit', function (e) {
+//   // e.preventDefault();
+//   let token = document.cookie.replace(/token\=/i, '');
+//   $.ajax({
+//     type: 'POST',
+//     url: `${ENV.apiURL}/upload`,
+//     async: false,
+//     headers: {
+//       'Authorization': 'Bearer ' + token,
+//     },
+//   })
+//     .then(data => console.log(data));
+
+// });
+
 
 
 app.initGuestView = () => {
@@ -77,9 +92,9 @@ app.initGuestView = () => {
   $('#oauth').empty().append(`<a href="${ENV.apiURL}/login">Login With Auth0</a>`);
 };
 
-app.initSignedInView = () => {
-  var token = document.cookie.replace(/token\=/i, '');
-
+app.initSignedInView = (data) => {
+  let token = document.cookie.replace(/token\=/i, '');
+  console.log(data);
   $('#token').text(token);
   $('section').hide();
   $('#upload').show();
@@ -97,13 +112,20 @@ if (document.cookie && document.cookie.match(/token/i)) {
     headers: {
       'Authorization': 'Bearer ' + token,
     },
-    success: function() {
-      app.initSignedInView();
-    },      
-    error: function() {
-      app.initGuestView();
-    },
-  }); 
+  })
+    .then(profileID => {
+      $.ajax({
+        type: 'GET',
+        url: `${ENV.apiURL}/api/v1/profiles/${profileID}`,
+        async: false,
+        header: {
+          'Authorization': 'Bearer ' + token,
+        },
+      })
+        .then(data => app.initSignedInView(data))
+        .catch(error => console.log(error));
+    })
+    .catch(app.initGuestView()); 
 } else {
   app.initGuestView();
 }

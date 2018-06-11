@@ -44,8 +44,13 @@ export default (req, res, next) => {
     let authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      
-      return getAuth();
+      try {
+        authorize(req.headers.cookie.replace(/token\=/i, ''));
+      }
+      catch (error) {
+        return getAuth();
+
+      }
     }
 
     if (authHeader.match(/basic/i)) {

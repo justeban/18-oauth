@@ -1,28 +1,29 @@
 import mongoose from 'mongoose';
-import Users from '../auth/model.js';
+import Profiles from '../models/profiles.js';
 
-const petrobotSchema = mongoose.Schema({
-  imgURL: { type: String, required: true },
-  userid: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+const picsSchema = mongoose.Schema({
+  url: { type: String, required: true },
+  description: {type: String},
+  profileID: { type: mongoose.Schema.Types.ObjectId, ref: 'profiles' },
 });
 
-petrobotSchema.pre('findOne', function (next) {
-  this.populate('userid');
+picsSchema.pre('findOne', function (next) {
+  this.populate('profileID');
   next();
 });
 
-petrobotSchema.pre('save', function (next) {
+picsSchema.pre('save', function (next) {
   let imgID = this._id;
-  let userid = this.userid;
+  let profileID = this.profileID;
 
-  Users.findById(userid)
+  Profiles.findById(profileID)
     .then(user => {
       if (!user) {
         return Promise.reject('Invalid Team Specified');
       } else {
-        Users.findOneAndUpdate(
-          { _id: userid },
-          { $addToSet: { pets: imgID } }
+        Profiles.findOneAndUpdate(
+          { _id: profileID },
+          { $addToSet: { pics: imgID } }
         )
           .then(Promise.resolve())
           .catch(err => Promise.reject(err));
@@ -32,4 +33,4 @@ petrobotSchema.pre('save', function (next) {
     .catch(next);
 });
 
-export default mongoose.model('petrobots', petrobotSchema);
+export default mongoose.model('pics', picsSchema);

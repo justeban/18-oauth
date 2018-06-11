@@ -5,11 +5,10 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  username: { type: String, required: true},
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'petrobots' }],
-  pics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'pics'}],
+  profile: { type: mongoose.Schema.Types.ObjectId, ref: 'profiles' },
 });
 
 userSchema.pre('save', function (next) {
@@ -25,7 +24,7 @@ userSchema.pre('save', function (next) {
 
 userSchema.pre('findOne', function (next) {
   this.populate('pets');
-  this.populate('pics');
+  // this.populate('pics');
   next();
 });
 
@@ -41,12 +40,9 @@ userSchema.statics.createFromAuth0 = function(incoming) {
       return user;
     })
     .catch(error => {
-      // Create the user
-      let username = incoming.email;
-      let password = incoming.password;
       return this.create({
-        username: username,
-        password: password,
+        username: incoming.username,
+        password: incoming.password,
         email: incoming.email,
       });
     });

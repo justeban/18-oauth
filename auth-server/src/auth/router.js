@@ -1,13 +1,18 @@
 'use strict';
 
 import express from 'express';
-const authRouter = express.Router();
-
 import passport from 'passport';
+import superagent from 'superagent';
+
+const authRouter = express.Router();
 
 import Petrobot from '../models/petrobots.js';
 import User from './model.js';
+import Profile from '../models/profiles.js';
+import Pics from '../models/pics.js';
+
 import auth from '../auth/middleware.js';
+
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 
@@ -19,9 +24,21 @@ authRouter.post('/signup', (req, res, next) => {
 });
 
 authRouter.get('/signin', auth, (req, res, next) => { //eslint-disable-line 
-  console.log(req.user);
   res.cookie('Token', req.token);
-  res.send(req.token);
+  res.send(req.user.profile);
+});
+
+authRouter.get('/api/v1/profiles/:id', (req, res, next) => {
+  Profile.findOne({_id: req.params.id})
+    .then(profile => sendJSON(res, profile))
+    .catch(next);
+});
+
+authRouter.post('/api/v1/pics/:profileID', auth, (req, res, next) => {
+  let pic = new Pics(req.body);
+  pic.save()
+    .then(picData => sendJSON(res, picData))
+    .catch(next);
 });
 
 authRouter.get('/api/v1/users', auth, (req, res, next) => {
@@ -85,15 +102,26 @@ authRouter.get(
   }),
   function (req, res) {
     let user = {
-      username: req.user._json.given_name,
+      name: req.user._json.name,
+      username: req.user._json.email,
       email: req.user._json.email,
+      picture: req.user._json.picture,
       password: req.user.id,
-    };    
+    };
+    console.log('user info', user);    
     User.createFromAuth0(user)
-      .then(user => {
-        return user.generateToken();
+      .then(userData => {
+        let profile = {
+          userId: userData._id,
+          name: user.name,
+          username: userData.username,
+          email: user.email,
+        };
+        console.log('profile info', profile);
+        return Profile.createFromAuth0(profile);
       })
-      .then(token => {
+      .then(profile => {
+        let token = profile.generateToken();
         res.cookie('Token', token);
         res.redirect(process.env.CLIENT_URL);
       })
