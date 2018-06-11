@@ -6,6 +6,9 @@ import cors from 'cors';
 
 import authRouter from './auth/router.js';
 import uploadRouter from './routes/upload.js';
+import profilesRouter from './routes/profiles.js';
+import usersRouter from './routes/users.js';
+import picsRouter from './routes/pics.js';
 
 import errorHandler from './middleware/error.js';
 import notFound from './middleware/404.js';
@@ -49,6 +52,9 @@ app.use(express.urlencoded({extended: true}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(picsRouter);
+app.use(usersRouter);
+app.use(profilesRouter);
 app.use(uploadRouter);
 app.use(authRouter);
 

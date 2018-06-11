@@ -6,7 +6,6 @@ import superagent from 'superagent';
 
 const authRouter = express.Router();
 
-import Petrobot from '../models/petrobots.js';
 import User from './model.js';
 import Profile from '../models/profiles.js';
 import Pics from '../models/pics.js';
@@ -26,50 +25,6 @@ authRouter.post('/signup', (req, res, next) => {
 authRouter.get('/signin', auth, (req, res, next) => { //eslint-disable-line 
   res.cookie('Token', req.token);
   res.send(req.user.profile);
-});
-
-authRouter.get('/api/v1/profiles/:id', (req, res, next) => {
-  Profile.findOne({_id: req.params.id})
-    .then(profile => sendJSON(res, profile))
-    .catch(next);
-});
-
-authRouter.post('/api/v1/pics/:profileID', auth, (req, res, next) => {
-  let pic = new Pics(req.body);
-  pic.save()
-    .then(picData => sendJSON(res, picData))
-    .catch(next);
-});
-
-authRouter.get('/api/v1/users', auth, (req, res, next) => {
-  User.find({})
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.get('/api/v1/users/:id', auth, (req, res, next) => {
-  User.findOne({ _id: req.params.id })
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.post('/api/v1/petrobots', auth, (req, res, next) => { //eslint-disable-line
-  let pet = new Petrobot(req.body);
-  pet.save()
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.get('/api/v1/petrobots', auth, (req, res, next) => {
-  Petrobot.find({})
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.get('/api/v1/petrobots/:id', auth, (req, res, next) => {
-  Petrobot.findOne({ _id: req.params.id })
-    .then(data => sendJSON(res, data))
-    .catch(next);
 });
 
 // AUTH0 ROUTER INFO
@@ -108,7 +63,6 @@ authRouter.get(
       picture: req.user._json.picture,
       password: req.user.id,
     };
-    console.log('user info', user);    
     User.createFromAuth0(user)
       .then(userData => {
         let profile = {
@@ -117,7 +71,6 @@ authRouter.get(
           username: userData.username,
           email: user.email,
         };
-        console.log('profile info', profile);
         return Profile.createFromAuth0(profile);
       })
       .then(profile => {

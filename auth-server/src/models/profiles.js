@@ -16,7 +16,6 @@ const profileSchema = new mongoose.Schema({
 
 profileSchema.pre('findOne', function (next) {
   this.populate('pics');
-  // this.populate('pics');
   next();
 });
 

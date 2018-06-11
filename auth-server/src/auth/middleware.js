@@ -35,7 +35,7 @@ export default (req, res, next) => {
     // res.set({
     //   'WWW-Authenticate': 'Basic realm="protected secret stuff"',
     // }).send(401);
-    next('bummer');
+    next('You don\'t have the credentials...bummer');
   };
 
   try {

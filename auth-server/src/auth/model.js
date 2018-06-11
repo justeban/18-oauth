@@ -22,12 +22,6 @@ userSchema.pre('save', function (next) {
     });
 });
 
-userSchema.pre('findOne', function (next) {
-  this.populate('pets');
-  // this.populate('pics');
-  next();
-});
-
 userSchema.statics.createFromAuth0 = function(incoming) {
   if (!incoming || !incoming.email) {
     return Promise.reject('VALIDATION ERROR: missing username/email or password ');

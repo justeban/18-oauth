@@ -37,7 +37,7 @@ $('#signup').on('submit', function (e) {
   $.ajax({
     type: 'POST',
     url: `${ENV.apiURL}/signup`,
-    async: false,
+    async: true,
     data: postData,
     success: function (data) {
       token = data;
@@ -55,7 +55,7 @@ $('#signin').on('submit', function (e) {
   $.ajax({
     type: 'GET',
     url: `${ENV.apiURL}/signin`,
-    async: false,
+    async: true,
     headers: {
       'Authorization': 'Basic ' + authstring,
     },
@@ -117,7 +117,7 @@ if (document.cookie && document.cookie.match(/token/i)) {
       $.ajax({
         type: 'GET',
         url: `${ENV.apiURL}/api/v1/profiles/${profileID}`,
-        async: false,
+        async: true,
         header: {
           'Authorization': 'Bearer ' + token,
         },
