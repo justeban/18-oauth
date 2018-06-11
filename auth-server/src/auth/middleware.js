@@ -20,6 +20,7 @@ export default (req, res, next) => {
   let authenticate = (auth) => {
     User.authenticate(auth)
       .then(user => {
+        
         if (!user) {
           getAuth();
         }
@@ -35,7 +36,7 @@ export default (req, res, next) => {
     // res.set({
     //   'WWW-Authenticate': 'Basic realm="protected secret stuff"',
     // }).send(401);
-    next('You don\'t have the credentials...bummer');
+    next({message:'You don\'t have the credentials...bummer', status: 401});
   };
 
   try {

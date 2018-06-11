@@ -24,7 +24,8 @@ authRouter.post('/signup', (req, res, next) => {
 
 authRouter.get('/signin', auth, (req, res, next) => { //eslint-disable-line 
   res.cookie('Token', req.token);
-  res.send(req.user.profile);
+  res.status(200);
+  res.send(req.token);
 });
 
 // AUTH0 ROUTER INFO
@@ -56,6 +57,7 @@ authRouter.get(
     failureRedirect: process.env.CLIENT_URL,
   }),
   function (req, res) {
+    console.log(req.user.id);
     let user = {
       name: req.user._json.name,
       username: req.user._json.email,
