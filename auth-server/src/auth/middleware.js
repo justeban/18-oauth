@@ -20,6 +20,7 @@ export default (req, res, next) => {
   let authenticate = (auth) => {
     User.authenticate(auth)
       .then(user => {
+        
         if (!user) {
           getAuth();
         }
@@ -35,15 +36,22 @@ export default (req, res, next) => {
     // res.set({
     //   'WWW-Authenticate': 'Basic realm="protected secret stuff"',
     // }).send(401);
-    next('bummer');
+    next({message:'You don\'t have the credentials...bummer', status: 401});
   };
 
   try {
+    
     let auth = {};
     let authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return getAuth();
+      try {
+        authorize(req.headers.cookie.replace(/token\=/i, ''));
+      }
+      catch (error) {
+        return getAuth();
+
+      }
     }
 
     if (authHeader.match(/basic/i)) {

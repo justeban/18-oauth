@@ -1,13 +1,17 @@
 'use strict';
 
 import express from 'express';
+import passport from 'passport';
+import superagent from 'superagent';
+
 const authRouter = express.Router();
 
-import passport from 'passport';
-
-import Petrobot from '../models/petrobots.js';
 import User from './model.js';
+import Profile from '../models/profiles.js';
+import Pics from '../models/pics.js';
+
 import auth from '../auth/middleware.js';
+
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 
@@ -20,38 +24,7 @@ authRouter.post('/signup', (req, res, next) => {
 
 authRouter.get('/signin', auth, (req, res, next) => { //eslint-disable-line 
   res.cookie('Token', req.token);
-  res.send(req.token);
-});
-
-authRouter.get('/api/v1/users', auth, (req, res, next) => {
-  User.find({})
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.get('/api/v1/users/:id', auth, (req, res, next) => {
-  User.findOne({ _id: req.params.id })
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.post('/api/v1/petrobots', auth, (req, res, next) => { //eslint-disable-line
-  let pet = new Petrobot(req.body);
-  pet.save()
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.get('/api/v1/petrobots', auth, (req, res, next) => {
-  Petrobot.find({})
-    .then(data => sendJSON(res, data))
-    .catch(next);
-});
-
-authRouter.get('/api/v1/petrobots/:id', auth, (req, res, next) => {
-  Petrobot.findOne({ _id: req.params.id })
-    .then(data => sendJSON(res, data))
-    .catch(next);
+  res.send(req.user.profile);
 });
 
 // AUTH0 ROUTER INFO
@@ -73,6 +46,7 @@ authRouter.get(
 
 authRouter.get('/logout', (req, res) => {
   req.logout();
+  res.cookie('Token', '');
   res.redirect(process.env.CLIENT_URL);
 });
 
@@ -82,19 +56,30 @@ authRouter.get(
     failureRedirect: process.env.CLIENT_URL,
   }),
   function (req, res) {
+    console.log(req.user.id);
     let user = {
-      username: req.user._json.given_name,
+      name: req.user._json.name,
+      username: req.user._json.email,
       email: req.user._json.email,
+      picture: req.user._json.picture,
       password: req.user.id,
-    };    
+    };
     User.createFromAuth0(user)
-      .then(user => {
-        console.log(user);
-        return user.generateToken();
+      .then(userData => {
+        let profile = {
+          userId: userData._id,
+          name: user.name,
+          username: userData.username,
+          email: user.email,
+        };
+        return Profile.createFromAuth0(profile);
       })
-      .then(res.redirect(process.env.CLIENT_URL))
-      .catch();
-       
+      .then(profile => {
+        let token = profile.generateToken();
+        res.cookie('Token', token);
+        res.redirect(process.env.CLIENT_URL);
+      })
+      .catch(err => console.log(err));
   }
 );
 
