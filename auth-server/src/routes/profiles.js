@@ -20,6 +20,12 @@ profilesRouter.post('/api/v1/pics/:profileID', auth, (req, res, next) => {
     .catch(next);
 });
 
+profilesRouter.delete('/api/v1/profiles/:id', auth, (req, res, next) => {
+  Profile.deleteOne({_id: req.params.id})
+    .then(data => sendJSON(res, data))
+    .catch(next);
+});
+
 let sendJSON = (res, data) => {
   res.statusCode = 200;
   res.statusMessage = 'OK';
