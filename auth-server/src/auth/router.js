@@ -2,17 +2,14 @@
 
 import express from 'express';
 import passport from 'passport';
-import superagent from 'superagent';
 
 const authRouter = express.Router();
 
-import User from './model.js';
-import Profile from '../models/profiles.js';
-import Pics from '../models/pics.js';
-
 import auth from '../auth/middleware.js';
 
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+import User from './model.js';
+import Profile from '../models/profiles.js';
+
 
 
 authRouter.post('/signup', (req, res, next) => {
