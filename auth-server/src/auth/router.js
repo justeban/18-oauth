@@ -2,14 +2,13 @@
 
 import express from 'express';
 import passport from 'passport';
-import superagent from 'superagent';
 
 const authRouter = express.Router();
 
+import auth from '../auth/middleware.js';
+
 import User from './model.js';
 import Profile from '../models/profiles.js';
-
-import auth from '../auth/middleware.js';
 
 authRouter.post('/signup', (req, res, next) => {
   let user = new User(req.body);

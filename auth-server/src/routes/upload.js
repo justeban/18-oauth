@@ -5,7 +5,7 @@ import multer from 'multer';
 import jwt from 'jsonwebtoken';
 
 import auth from '../auth/middleware.js';
-import s3 from '../lib/s3.js';
+import s3 from '../lib/S3.js';
 
 import Pics from '../models/pics.js';
 import Profiles from '../models/profiles.js';
