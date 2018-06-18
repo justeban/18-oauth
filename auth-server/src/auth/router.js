@@ -14,7 +14,18 @@ import auth from '../auth/middleware.js';
 authRouter.post('/signup', (req, res, next) => {
   let user = new User(req.body);
   user.save()
-    .then(user => res.send(user.generateToken()))
+    .then(userData => {
+      let profile = {
+        userId: userData._id,
+        name: req.body.name,
+        username: userData.username,
+        email: user.email,
+      };
+      return Profile.createFromAuth0(profile);
+    })
+    .then(profile => {
+      res.send(profile.generateToken());
+    })
     .catch(next);
 });
 
