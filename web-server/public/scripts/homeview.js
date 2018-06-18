@@ -100,6 +100,14 @@ app.initSignedInView = (data) => {
   $('#upload').show();
   $('#oauth').empty().append(`<a href="${ENV.apiURL}/logout">Logout</a>`);
   $('#upload-form').attr('action', `${ENV.apiURL}/upload`);
+
+  if (data.pics.length) {
+    for (let i = 0; i < data.pics.length; i++) {
+      let imgurl = data.pics[i].url;
+      let imgel = `<li><img src="${imgurl}"/></li>`;
+      $('#pics').append(imgel);
+    }
+  }
 };
 
 
