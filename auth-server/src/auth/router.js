@@ -10,16 +10,25 @@ import auth from '../auth/middleware.js';
 import User from './model.js';
 import Profile from '../models/profiles.js';
 
-
-
 authRouter.post('/signup', (req, res, next) => {
   let user = new User(req.body);
   user.save()
-    .then(user => res.send(user.generateToken()))
+    .then(userData => {
+      let profile = {
+        userId: userData._id,
+        name: req.body.name,
+        username: userData.username,
+        email: user.email,
+      };
+      return Profile.createFromAuth0(profile);
+    })
+    .then(profile => {
+      res.send(profile.generateToken());
+    })
     .catch(next);
 });
 
-authRouter.get('/signin', auth, (req, res, next) => { //eslint-disable-line 
+authRouter.get('/signin', auth, (req, res, next) => { 
   res.cookie('Token', req.token);
   res.send(req.user.profile);
 });
@@ -53,7 +62,6 @@ authRouter.get(
     failureRedirect: process.env.CLIENT_URL,
   }),
   function (req, res) {
-    console.log(req.user.id);
     let user = {
       name: req.user._json.name,
       username: req.user._json.email,
@@ -79,13 +87,5 @@ authRouter.get(
       .catch(err => console.log(err));
   }
 );
-
-let sendJSON = (res, data) => {
-  res.statusCode = 200;
-  res.statusMessage = 'OK';
-  res.setHeader('Content-Type', 'application/json');
-  res.write(JSON.stringify(data));
-  res.end();
-};
 
 export default authRouter;

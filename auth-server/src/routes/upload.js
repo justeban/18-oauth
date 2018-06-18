@@ -41,8 +41,6 @@ uploadRouter.post('/upload', upload.any(), (req, res, next) => {
         });
     })
     .catch(next);
-
-
 });
 
 export default uploadRouter;

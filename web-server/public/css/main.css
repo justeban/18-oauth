@@ -1,0 +1,15 @@
+#pics > li > img {
+  float: left;
+  height: 200px;
+  margin: 5px;
+  width: 200px;
+}
+#pics > li {
+  list-style-type: none;
+  padding: none;
+}
+#pics {
+  margin: 10px auto;
+  overflow: auto;
+  width: 80%;
+}
