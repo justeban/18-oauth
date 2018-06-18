@@ -32,10 +32,6 @@ export default (req, res, next) => {
   };
 
   let getAuth = () => {
-
-    // res.set({
-    //   'WWW-Authenticate': 'Basic realm="protected secret stuff"',
-    // }).send(401);
     next({message:'You don\'t have the credentials...bummer', status: 401});
   };
 

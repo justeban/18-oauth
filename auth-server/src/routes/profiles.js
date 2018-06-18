@@ -4,8 +4,10 @@ import express from 'express';
 
 const profilesRouter = express.Router();
 
-import Profile from '../models/profiles.js';
 import auth from '../auth/middleware.js';
+
+import Profile from '../models/profiles.js';
+import Pics from '../models/pics.js';
 
 profilesRouter.get('/api/v1/profiles/:id', (req, res, next) => {
   Profile.findOne({ _id: req.params.id })

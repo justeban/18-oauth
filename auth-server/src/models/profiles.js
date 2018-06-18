@@ -44,6 +44,7 @@ profileSchema.methods.generateToken = function () {
   return jwt.sign({ id: this.userId._id }, process.env.SECRET || 'changethis');
 };
 
+
 profileSchema.pre('save', function (next) {
   let profileId = this._id;
   let userId = this.userId;

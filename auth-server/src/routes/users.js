@@ -7,7 +7,7 @@ const usersRouter = express.Router();
 import User from '../auth/model.js';
 import auth from '../auth/middleware.js';
 
-usersRouter.get('/api/v1/users', (req, res, next) => {
+usersRouter.get('/api/v1/users', auth, (req, res, next) => {
   User.find({})
     .then(data => sendJSON(res, data))
     .catch(next);
