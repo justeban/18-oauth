@@ -31,7 +31,8 @@ $('#money').on('click', function (e) {
 $('#signup').on('submit', function (e) {
   let username = $(this).find('[name=username]').val();
   let password = $(this).find('[name=password]').val();
-  let postData = { username, password };
+  let email = $(this).find('[name=email]').val();
+  let postData = { username, email, password };
 
   e.preventDefault();
   $.ajax({
@@ -40,9 +41,7 @@ $('#signup').on('submit', function (e) {
     async: true,
     data: postData,
     success: function (data) {
-      token = data;
-      $('#money').show();
-      $('#token').text(token);
+      app.initSignedInView(data);
     },
   });
 });
@@ -60,11 +59,22 @@ $('#signin').on('submit', function (e) {
       'Authorization': 'Basic ' + authstring,
     },
     success: function (data) {
-      token = data;
-      $('#money').show();
-      $('#token').text(token);
+      app.initSignedInView(data);
     },
-  });
+  })
+    .then(profileID => {
+      $.ajax({
+        type: 'GET',
+        url: `${ENV.apiURL}/api/v1/profiles/${profileID}`,
+        async: true,
+        header: {
+          'Authorization': 'Bearer ' + token,
+        },
+      })
+        .then(data => app.initSignedInView(data))
+        .catch(error => console.log(error));
+    })
+    .catch(app.initGuestView());
 });
 
 // $('#upload-form').on('submit', function (e) {

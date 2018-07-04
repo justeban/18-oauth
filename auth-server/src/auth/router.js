@@ -16,14 +16,17 @@ authRouter.post('/signup', (req, res, next) => {
     .then(userData => {
       let profile = {
         userId: userData._id,
-        name: req.body.name,
+        name: userData.username,
         username: userData.username,
-        email: user.email,
+        email: userData.email,
       };
       return Profile.createFromAuth0(profile);
     })
     .then(profile => {
-      res.send(profile.generateToken());
+      let token = profile.generateToken();
+      res.cookie('Token', token);
+      res.send(profile);
+      res.end();
     })
     .catch(next);
 });

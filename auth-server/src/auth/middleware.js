@@ -18,13 +18,14 @@ export default (req, res, next) => {
   };
 
   let authenticate = (auth) => {
+    
     User.authenticate(auth)
       .then(user => {
-        
         if (!user) {
           getAuth();
         }
         else {
+          req.user = user;
           req.token = user.generateToken();
           next();
         }
@@ -39,17 +40,17 @@ export default (req, res, next) => {
     
     let auth = {};
     let authHeader = req.headers.authorization;
-
+    
     if (!authHeader) {
       try {
         authorize(req.headers.cookie.replace(/token\=/i, ''));
       }
       catch (error) {
         return getAuth();
-
+        
       }
     }
-
+    
     if (authHeader.match(/basic/i)) {
       let base64Header = authHeader.replace(/Basic\s+/i, '');
       let base64Buf = Buffer.from(base64Header, 'base64');
