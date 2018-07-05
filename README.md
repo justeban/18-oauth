@@ -59,7 +59,7 @@ This api also supports a mongoose 'pics' model that is represented by the follow
 
 **POST** `signup`
 
-### https://salty-reef-53948.herokuapp.com/api/signup
+### https://salty-reef-53948.herokuapp.com/signup
 * `POST` request - when a user signs up with name, username, email and password, it sends back a token for Beareer authorization
 
 - Example
