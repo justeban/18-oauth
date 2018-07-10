@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+require('mongoose-schema-jsonschema')(mongoose);
+
 import Profiles from '../models/profiles.js';
 
 const picsSchema = mongoose.Schema({
