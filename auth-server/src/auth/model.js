@@ -1,6 +1,7 @@
 'use strict';
 
 import mongoose from 'mongoose';
+require('mongoose-schema-jsonschema')(mongoose);
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
