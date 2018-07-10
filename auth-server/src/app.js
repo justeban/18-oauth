@@ -53,11 +53,11 @@ app.use(express.urlencoded({extended: true}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(modelRouter);
 app.use(picsRouter);
 app.use(usersRouter);
 app.use(profilesRouter);
 app.use(uploadRouter);
-app.use(modelRouter);
 app.use(authRouter);
 
 app.use(notFound);
